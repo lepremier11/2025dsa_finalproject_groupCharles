@@ -9,7 +9,14 @@ format:
     number-sections: true
     theme: cerulean
 ---
+#| include: false
+#| warning: false
+#| message: false
 
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE
+)
 # Instructions  
 This file contains both the **instructions** for the mid-term project and placeholders for your code. You are required to use this file to produce code, output, and answers to the questions below.  
 
@@ -27,12 +34,51 @@ To get you setup, you will need to:
   
 # Introduction  
 Describe here the introduction of your problem. Consider this as a shortened version of your paper, where you will briefly discuss in 3-4 paragraphs what is the issue/gap in literature, and how the data you collected will help answer this gap.  
+The persistence of Escherichia coli (E. coli) on fresh produce remains a significant concern for food safety, particularly in the context of biological soil amendments of animal origin (BSAAO). Organic fertilizers, while improving soil health and sustainability, may inadvertently introduce or support the survival of enteric pathogens like E. coli in the agroecosystem. Despite the implementation of recommended pre-harvest intervals, evidence suggests that certain soil conditions or management practices may extend pathogen survival, potentially compromising produce safety.
+
+Current literature has primarily focused on the initial contamination routes and general trends in pathogen decline. However, there remains a gap in understanding how specific soil amendments, environmental conditions, and spatial variability (e.g., location) interact to influence the survival of E. coli. In particular, limited data are available on how amendments like poultry litter or composted materials affect pathogen reduction across time and space, under real-world field conditions.
+
+To address this gap, we conducted a field experiment evaluating E. coli populations in soil amended with different treatments and monitored over time across multiple locations. The study design incorporates key variables such as amendment type, sampling day, and field location to provide a comprehensive view of how these factors contribute to E. coli persistence.
+
+The insights generated from this study can inform both scientific understanding and risk assessment models used by regulatory agencies. Ultimately, they support the development of more refined, evidence-based guidelines for pre-harvest intervals and soil management practices in produce production systems.
 
 # Hypothesis and objectives  
 Describe here your hypothesis, followed by your objectives. Make sure your hypothesis are testable and bold, and objectives are clear.  
 
+**Hypothesis**:
+The type of soil amendment significantly influences the survival of E. coli in soil, and this effect is modulated by time and location.
+
+**Objectives**:
+
+To evaluate the impact of different soil amendments on E. coli population dynamics over time.
+
+To assess how field location contributes to variability in E. coli survival across amendment types.
+
+To determine whether there is a significant interaction between amendment, location, and sampling day in influencing E. coli persistence in the soil.
+
+
+
 # Material and Methods  
 Describe here your overall material and methods as it pertains to the analysis you will conduct, including study description, site/setup description, what equipment was used, etc. just like you would in a paper. Make sure to clearly explain what was measured and how.
+Inoculum Preparation:
+A rifampin-resistant E. coli strain (TVS 353) was cultured and prepared to a final concentration of 1.0 × 10⁸ CFU/mL in buffered peptone water (BPW) for field inoculation. Enumeration was confirmed using TSA-R plates.
+
+Plot Preparation:
+A field study was conducted at two sites in Georgia and Florida from Nov 2022 to Apr 2023. Plots received one of four treatments: poultry litter (PL), heat-treated poultry pellets (HTPP), a positive control (UN), or a negative control (C), with each treatment replicated three times (12 plots total). Soil amendments and inoculum were mixed using a sanitized tiller.
+
+Plot Inoculation:
+Soil samples were collected on 10 timepoints (days 0 to 140) from the top 5 cm layer. Each sample (~100 g) was composited from five subsamples and processed on the same day.
+
+Bacterial Enumeration:
+Soil E. coli levels were quantified using spread plating on TSA-R (incubated at 42°C), and MPN was used when counts fell below detection limits. Confirmation was done by streaking MPN cultures on TSA-R.
+
+Soil Physicochemical Analysis:
+Soil was analyzed at each timepoint for:
+
+Potassium: Extracted with 1 M KCl, shaken, and stored at -30°C.
+Ammonia & Nitrate: Measured using an Ammonia Analyzer after KCl extraction.
+Electrical Conductivity: Measured with a calibrated conductivity meter in a 1:5 soil-to-water slurry.
+pH and Nutrient Analysis: Oven-dried and ground soil was analyzed for nutrients via Mehlich extraction and ICP-OES. pH measurements and C/N analysis were also performed.
 
 ## Study design  
 Clearly describe your study design here, including treatment design (which factors and levels, the hierarchy among them, etc.), and your experimental design (number of reps/blocks, how was randomization performed, etc.), as we talked about in class.  
@@ -40,6 +86,29 @@ Clearly describe your study design here, including treatment design (which facto
 
 ## Statistical analysis  
 Describe here your statistical analysis, including what type of ANOVA model you ran (based on the design above), what was your response variable, what were your explanatory variables and how were the explanatory variables treated (random or fixed). Provide your alpha level. Explain which function from which package you used to analyze this data. Explain how you checked linear model assumptions and whether or not they were met. Overall, make sure you explain in sufficient detail that, if given your data, a knowledgeable person would be able to reproduce your analysis exactly.  
+In this study, a repeated measures linear mixed effects ANOVA was conducted to examine the effects of amendment types, location, and time (day) on the log-transformed population of E. coli (or MPN) as the response variable. The factors were:
+
+Fixed Factors:
+
+Treatment (ammendment): three levels (use of heat-treated poultry pellets, use of poultry litter, and no amendments) applied.
+
+Location (location): Florida and Georgia
+
+Time (Day): Represents the time points at which measurements were taken (0, 1, 3, 7, 14, 28, 56, 84, 112, 140).
+Random factor: Plot-id (rep_am)
+
+The ANOVA model was run using the lm() function and evaluated with the anova() function, with an alpha level of 0.05 to determine statistical significance. If significant factors or interactions were found, post-hoc pairwise comparisons were made using least squares means (LS-means) and Bonferroni adjustment via the emmeans() and cld() functions.
+
+Assumptions Checked:
+Normality: Residuals were assessed via Q-Q plots.
+
+Homogeneity of Variance: Checked with residual plots .
+
+Independence: Residuals were checked for autocorrelation, given the repeated measures.
+
+Linearity: Visual checks were done for linear relationships between predictors and the response.
+
+Significant effects were interpreted through pairwise comparisons, with the Bonferroni adjustment applied to control for multiple tests. The analysis was conducted using R packages such as lm(), anova(), emmeans(), and cld() to ensure reproducibility and reliability of results.
 
 # Results  
 Here is where the coding is going to happen, and it will be completely up to you. Include under this section as many sub-sections (using ##) and as many chunks needed to create the analytical workflow for your analysis, starting at loading packages and data, wrangling, EDA, modeling, assumptions checking, ANOVA table, means, pairwise comparisons, and final publication-quality plot.  
@@ -49,8 +118,8 @@ Make sure to run a model that reflects your study design. Even if your study des
 Before each chunk, describe the steps being performed in that chunk. For example, "Here I will load the data".  
 
 If a chunk produces output, like printing a data frame, statistical summary, a plot, ANOVA table, etc., make sure to write text interpreting what you see and how you can/will use that information to move forward to the next steps in the workflow.  
-
-```{r, warning=FALSE; message = FALSE}
+We are loading our packages here
+```{r, warning=FALSE, message=FALSE}
 # Load packages
 library(readxl)
 library(ggplot2)
@@ -62,13 +131,26 @@ library(emmeans)
 library(multcomp)# for letter display
 library(car)
 library(readxl)
-```
+# Plot diagnostics
+library(ggplot2)
+library(patchwork)
+library(broom.mixed)
 
-```{r}
+```
+Here, I will load the data and do some wrangling
+```{r, warning=FALSE, message=FALSE}
 # Read in the data file
+ecoli <- read_excel("../data/FL, GA_soil_ec_bothlocations.xlsx") %>%
+  mutate(across(c(day, rep_am, ammendment, location), as.factor))
+
 data <- read_excel("../data/FL,GA_commonnutrient.xls") %>%
-  mutate(across(c(rep_no, day, rep_am, ammendment, location), as.factor))
-data
+  mutate(across(c(rep_no, day, rep_am, ammendment, location), as.factor)) %>%
+  left_join(
+    ecoli %>%
+      dplyr::select(location, day, rep_am, ammendment, count),
+    by = c("location", "day", "rep_am", "ammendment")
+  ) 
+  
 summary(data)
 
 # Split data by location
@@ -77,76 +159,233 @@ data_ga <- data %>% filter(location == "GA") %>% mutate(ammendment = relevel(amm
 
 ```
 
-
-```{r, warning= FALSE}
+Here, we do exploratory overview of all the response variable. 
+```{r, warning=FALSE, message=FALSE}
 # Exploratory Data Analysis (EDA)
 
-# Set theme for publication-ready plots
+# Set theme 
 theme_pub <- theme_bw(base_size = 14) +
   theme(panel.grid = element_blank(),
         strip.background = element_rect(fill = "#f0f0f0"),
         legend.position = "top")
 
-# Nutrients to explore visually
-nutrients <- c("pH", "SM", "EC", "Ca", "Mg", "Mn", "Zn", "N", "P", "K")
+# explore
+nutrients <- c("pH", "SM", "EC", "Ca", "Mg", "Mn", "Zn", "N", "P", "K", "count")
 
-# Plot nutrient distributions by amendment and location
+# Plot nutrient distributions by amendment and location per day
 for (nutrient in nutrients) {
   p <- ggplot(data, aes_string(x = "ammendment", y = nutrient, fill = "location")) +
     geom_boxplot(outlier.shape = NA, alpha = 0.8) +
     geom_jitter(position = position_jitterdodge(jitter.width = 0.2), alpha = 0.3, shape = 21) +
     facet_wrap(~day, scales = "free_y") +
-    labs(title = paste("Distribution of", nutrient, "by Amendment and Location"),
+    labs(title = paste("Distribution of", nutrient, "by Amendment and Location for each Day"),
          x = "Amendment", y = nutrient) +
     scale_fill_brewer(palette = "Set1") +
     theme_pub
   print(p)
 }
-
-# Define analysis wrapper function
-analyze_nutrient <- function(response) {
-  message("\n\n===== Analyzing: ", response, " =====")}
 ```
-As described earlier, a LME model with an autoregressive order 1 (AR1) to account for irregular intervals between sampling points.
-```{r}
-# Overall model
-  formula_all <- as.formula(paste(response, "~ day * ammendment * location"))
-  model_all <- lme(formula_all, data = data, random = ~1 | rep_am, correlation = corAR1(form = ~1 | rep_am))
-  print(anova(model_all))
-# LSMeans
-  em_all <- emmeans(model_all, ~ ammendment * location | day)
-  cld_all <- cld(em_all, reversed = TRUE, adjust = "Bonferroni", Letters = letters)
-  print(cld_all)
+As described earlier, a LME model with an autoregressive order 1 (AR1) to account for irregular intervals between sampling points will be conducted here.
+```{r, warning=FALSE, message=FALSE}
+## Let's try some iterations
+library(nlme)
+library(emmeans)
+library(multcompView)
 
-  # Pairwise comparisons
-  print(summary(contrast(em_all, method = "pairwise", adjust = "tukey")))
+results_list <- list()
+
+for (i in 6:ncol(data)) {
+  soil_property <- colnames(data)[i]
+  
+  cat("Analyzing:", soil_property, "\n")
+  
+  formula <- as.formula(paste(soil_property, "~ day * ammendment * location"))
+  
+  m2 <- lme(formula, data = data,
+            random = ~ 1 | rep_am, 
+            correlation = corAR1(form = ~ 1 | rep_am))
+  
+  anova_results <- anova(m2)
+  cat("ANOVA results for", soil_property, "\n")
+  print(anova_results) }
+  
+if (any(anova_results$`p-value` < 0.05, na.rm = TRUE)) { # Check if any factor is significant
+    lsmeans_ammendment <- emmeans(m2, ~ location|day|ammendment)
+    summary_lsmeans <- summary(lsmeans_ammendment)
+    
+    lsmeans_amendment_loc_day <- cld(lsmeans_ammendment, 
+                                     reversed = TRUE, 
+                                     adjust = "Bonferroni", 
+                                     Letters = letters)
+    
+    results_list[[soil_property]] <- list(
+      anova = anova_results,
+      lsmeans_summary = summary_lsmeans,
+      lsmeans_cld = lsmeans_amendment_loc_day
+    )
+  }
+## Only counts had all the factors being significant
+
+results_list$count
+
 ```
-```{r}
-# FL model
-  formula_fl <- as.formula(paste(response, "~ ammendment + day + ammendment * day"))
-  model_fl <- lme(formula_fl, data = data_fl, random = ~1 | rep_am, correlation = corAR1(form = ~1 | rep_am))
-  message("\n-- FL Model --")
-  print(anova(model_fl))
-  print(summary(emmeans(model_fl, ~ ammendment)))
-  print(summary(contrast(emmeans(model_fl, ~ ammendment), method = "pairwise", adjust = "tukey")))
-  print(summary(contrast(emmeans(model_fl, ~ ammendment * day), method = "pairwise", adjust = "tukey")))
 
-  # GA model
-  formula_ga <- as.formula(paste(response, "~ ammendment + day + ammendment * day"))
-  model_ga <- lme(formula_ga, data = data_ga, random = ~1 | rep_am, correlation = corAR1(form = ~1 | rep_am))
-  message("\n-- GA Model --")
-  print(anova(model_ga))
-  print(summary(emmeans(model_ga, ~ ammendment)))
-  print(summary(contrast(emmeans(model_ga, ~ ammendment), method = "pairwise", adjust = "tukey")))
-  print(summary(contrast(emmeans(model_ga, ~ day * ammendment), method = "pairwise", adjust = "tukey")))
+Here, we will extract our residuals before concluding any inference from the means priorly extracted. Only E. coli count will be utilized for post-hoc means extraction and comparison.
+```{r, warning = FALSE, message = FALSE}
+# Residual diagnostics for counts
+residuals_df <- augment(m2)
+
+
+p1 <- ggplot(residuals_df, aes(.fitted, .resid)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0, color = "red") +
+  labs(title = "Residuals vs Fitted", x = "Fitted", y = "Residuals") +
+  theme_pub
+
+p2 <- ggplot(residuals_df, aes(sample = .resid)) +
+  stat_qq() + stat_qq_line(color = "red") +
+  labs(title = "Normal Q-Q Plot", x = "Theoretical", y = "Sample") +
+  theme_pub
+
+p3 <- ggplot(residuals_df, aes(.resid)) +
+  geom_histogram(bins = 15, fill = "steelblue", color = "white") +
+  labs(title = "Histogram of Residuals", x = "Residuals") +
+  theme_pub
+
+p1 + p2 + p3
+```
+The normality, the absence of outliers, the independence of observations, and homoscedaticity of variance are all met for the residuals, as we can observe through the plots. Let's check the normality for the random effect (rep_am).
+
+```{r, warning=FALSE, message=FALSE}
+# Fit model only for 'count'
+soil_property <- "count"
+model <- lme(count ~ day * ammendment * location,
+             data = data,
+             random = ~1 | rep_am,
+             correlation = corAR1(form = ~1 | rep_am))
+
+# Store model in a list
+model_list <- list()
+model_list[[soil_property]] <- model
+
+# Plot Q-Q for random intercepts
+for (soil_property in names(model_list)) {
+  model <- model_list[[soil_property]]
+  
+  ranef_vals <- nlme::ranef(model)
+  
+  # Convert to data frame
+  ranef_df <- data.frame(
+    rep_am = rownames(ranef_vals),
+    intercept = ranef_vals[, 1]
+  )
+  
+  # Q-Q plot
+  p <- ggplot(ranef_df, aes(sample = intercept)) +
+    stat_qq() +
+    stat_qq_line(color = "red") +
+    labs(
+      title = paste("Q-Q Plot of Random Effects:", soil_property),
+      x = "Theoretical Quantiles",
+      y = "Random Intercepts"
+    ) +
+    theme_minimal()
+  
+  print(p)
 }
 
-# Run analysis
-for (nutrient in nutrients) {
-  analyze_nutrient(nutrient)
-}
-```
 
+```
+We can then make inferences, as the normality for random effects seems to be met.
+```{r}
+results_list$count
+```
+For instance, the effect of time (day), location and amendment types were found to significantly impact E. coli abundance at 99% confidence level. Therefore, the means will be extracted accordingly.
+```{r}
+lsmeans_ammendment <- emmeans(m2, ~ location|day|ammendment)
+    summary_lsmeans <- summary(lsmeans_ammendment)
+    
+    lsmeans_amendment_loc_day <- cld(lsmeans_ammendment, 
+                                     reversed = TRUE, 
+                                     adjust = "Bonferroni", 
+                                     Letters = letters) %>%
+  as.data.frame() %>%
+  mutate(letter=trimws(.group))
+    lsmeans_amendment_loc_day
+```
+Let's make our final plot with the letters
+```{r}
+#| fig-width: 20
+#| fig-height: 16
+#| fig-align: "center"
+#| echo: false
+#| warning: false
+#| message: false
+library(ggplot2)
+library(viridis)
+
+ggplot(mapping = aes(fill = ammendment)) +
+  # Boxplots
+  geom_boxplot(data = data,
+               aes(x = ammendment, y = count),
+               alpha = 0.7,
+               color = "black",
+               width = 0.6,
+               position = position_dodge(width = 0.8),
+               outlier.shape = NA) +
+  
+  # Jittered points
+  geom_jitter(data = data,
+              aes(x = ammendment, y = count),
+              shape = 21,
+              size = 2.5,
+              stroke = 0.3,
+              color = "black",
+              alpha = 0.5,
+              position = position_jitterdodge(jitter.width = 0.2, dodge.width = 0.8)) +
+
+  # CLD letters
+  geom_label(data = lsmeans_amendment_loc_day,
+             aes(x = ammendment, y = emmean + 0.25, label = letter),
+             fill = "white",
+             size = 4,
+             label.size = 0.2,
+             fontface = "bold",
+             color = "black",
+             inherit.aes = FALSE,
+             position = position_dodge(width = 0.8),
+             show.legend = FALSE) +
+  
+  labs(
+    x = "Amendment Type",
+    y = expression(italic("E. coli") * " population (log CFU/g)")
+  ) +
+  
+  scale_fill_viridis_d(option = "D", begin = 0.2, end = 0.85) +
+
+  # Facet by day (rows) and location (columns)
+  facet_grid(day ~ location, scales = "free_y") +
+
+  theme_minimal(base_size = 15) +
+  theme(
+    panel.grid.major.y = element_line(color = "grey90", size = 0.3),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    strip.text = element_text(face = "bold", size = 13, color = "black"),
+    strip.background = element_rect(fill = "grey90", color = NA),
+    panel.spacing = unit(1.5, "lines"),
+    axis.title = element_text(face = "bold"),
+    axis.text = element_text(color = "black"),
+    axis.ticks.y = element_line(),
+    axis.ticks.x = element_blank(),
+    legend.position = "none"
+  )
+
+# Save
+ggsave("../output/final_proj.png", width = 20, height = 16, dpi = 300)
+
+```
+The results show that the interaction between location, amendment, and time significantly impacted E. coli abundance. Notably, E. coli survived at higher levels in plots amended with HTPP, as confirmed by the significant difference found in Florida and Georgia. These results raise concern about the adequacy of the current National Organic Program's 90-120 day rule. Further risk assessments must be done in order to determine the risk of pathogen transfer to an actual produce, and the final risk to consumers.
 
 # Team work in GitHub  
 Whether you are working with your future-self or as duos, make sure to stage, commit, and push after finishing each of the sub-sections above. When committing, write commit messages that are short and descriptive (e.g., finished wrangling).  
