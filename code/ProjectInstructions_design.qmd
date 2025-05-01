@@ -9,14 +9,7 @@ format:
     number-sections: true
     theme: cerulean
 ---
-#| include: false
-#| warning: false
-#| message: false
 
-knitr::opts_chunk$set(
-  warning = FALSE,
-  message = FALSE
-)
 # Instructions  
 This file contains both the **instructions** for the mid-term project and placeholders for your code. You are required to use this file to produce code, output, and answers to the questions below.  
 
@@ -60,19 +53,19 @@ To determine whether there is a significant interaction between amendment, locat
 
 # Material and Methods  
 Describe here your overall material and methods as it pertains to the analysis you will conduct, including study description, site/setup description, what equipment was used, etc. just like you would in a paper. Make sure to clearly explain what was measured and how.
-Inoculum Preparation:
+**Inoculum Preparation**:
 A rifampin-resistant E. coli strain (TVS 353) was cultured and prepared to a final concentration of 1.0 × 10⁸ CFU/mL in buffered peptone water (BPW) for field inoculation. Enumeration was confirmed using TSA-R plates.
 
-Plot Preparation:
+**Plot Preparation**:
 A field study was conducted at two sites in Georgia and Florida from Nov 2022 to Apr 2023. Plots received one of four treatments: poultry litter (PL), heat-treated poultry pellets (HTPP), a positive control (UN), or a negative control (C), with each treatment replicated three times (12 plots total). Soil amendments and inoculum were mixed using a sanitized tiller.
 
-Plot Inoculation:
+**Plot Inoculation**:
 Soil samples were collected on 10 timepoints (days 0 to 140) from the top 5 cm layer. Each sample (~100 g) was composited from five subsamples and processed on the same day.
 
-Bacterial Enumeration:
+**Bacterial Enumeration**:
 Soil E. coli levels were quantified using spread plating on TSA-R (incubated at 42°C), and MPN was used when counts fell below detection limits. Confirmation was done by streaking MPN cultures on TSA-R.
 
-Soil Physicochemical Analysis:
+**Soil Physicochemical Analysis**:
 Soil was analyzed at each timepoint for:
 
 Potassium: Extracted with 1 M KCl, shaken, and stored at -30°C.
@@ -83,10 +76,7 @@ pH and Nutrient Analysis: Oven-dried and ground soil was analyzed for nutrients 
 ## Study design  
 Clearly describe your study design here, including treatment design (which factors and levels, the hierarchy among them, etc.), and your experimental design (number of reps/blocks, how was randomization performed, etc.), as we talked about in class.  
 
-
-## Statistical analysis  
-Describe here your statistical analysis, including what type of ANOVA model you ran (based on the design above), what was your response variable, what were your explanatory variables and how were the explanatory variables treated (random or fixed). Provide your alpha level. Explain which function from which package you used to analyze this data. Explain how you checked linear model assumptions and whether or not they were met. Overall, make sure you explain in sufficient detail that, if given your data, a knowledgeable person would be able to reproduce your analysis exactly.  
-In this study, a repeated measures linear mixed effects ANOVA was conducted to examine the effects of amendment types, location, and time (day) on the log-transformed population of E. coli (or MPN) as the response variable. The factors were:
+The factors were:
 
 Fixed Factors:
 
@@ -95,7 +85,15 @@ Treatment (ammendment): three levels (use of heat-treated poultry pellets, use o
 Location (location): Florida and Georgia
 
 Time (Day): Represents the time points at which measurements were taken (0, 1, 3, 7, 14, 28, 56, 84, 112, 140).
-Random factor: Plot-id (rep_am)
+
+Random factor: Plot-id (rep_am) - replication = 3.
+
+A complete randomization design was followed, and treatments were attributed accordingly.
+
+## Statistical analysis  
+Describe here your statistical analysis, including what type of ANOVA model you ran (based on the design above), what was your response variable, what were your explanatory variables and how were the explanatory variables treated (random or fixed). Provide your alpha level. Explain which function from which package you used to analyze this data. Explain how you checked linear model assumptions and whether or not they were met. Overall, make sure you explain in sufficient detail that, if given your data, a knowledgeable person would be able to reproduce your analysis exactly.  
+
+In this study, a repeated measures linear mixed effects ANOVA was conducted to examine the effects of amendment types, location, and time (day) on the log-transformed population of E. coli (or MPN) as the response variable. 
 
 The ANOVA model was run using the lm() function and evaluated with the anova() function, with an alpha level of 0.05 to determine statistical significance. If significant factors or interactions were found, post-hoc pairwise comparisons were made using least squares means (LS-means) and Bonferroni adjustment via the emmeans() and cld() functions.
 
