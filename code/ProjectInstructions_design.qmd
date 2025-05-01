@@ -50,7 +50,7 @@ Before each chunk, describe the steps being performed in that chunk. For example
 
 If a chunk produces output, like printing a data frame, statistical summary, a plot, ANOVA table, etc., make sure to write text interpreting what you see and how you can/will use that information to move forward to the next steps in the workflow.  
 
-```{r}
+```{r, warning=FALSE; message = FALSE}
 # Load packages
 library(readxl)
 library(ggplot2)
@@ -61,17 +61,92 @@ library(dplyr)
 library(emmeans)
 library(multcomp)# for letter display
 library(car)
+library(readxl)
 ```
 
 ```{r}
 # Read in the data file
-data <- read_excel("../data/FL,GA_commonnutrient.xlsx")
-data$rep_no<-as.factor(data$rep_no)
-data$day<-as.factor(data$day)
-data$rep_am<-as.factor(data$rep_am)
-data$ammendment<-as.factor(data$ammendment)
-data$location<-as.factor(data$location)
+data <- read_excel("../data/FL,GA_commonnutrient.xls") %>%
+  mutate(across(c(rep_no, day, rep_am, ammendment, location), as.factor))
+data
+summary(data)
+
+# Split data by location
+data_fl <- data %>% filter(location == "FL") %>% mutate(ammendment = relevel(ammendment, ref = "PC"))
+data_ga <- data %>% filter(location == "GA") %>% mutate(ammendment = relevel(ammendment, ref = "PC"))
+
 ```
+
+
+```{r, warning= FALSE}
+# Exploratory Data Analysis (EDA)
+
+# Set theme for publication-ready plots
+theme_pub <- theme_bw(base_size = 14) +
+  theme(panel.grid = element_blank(),
+        strip.background = element_rect(fill = "#f0f0f0"),
+        legend.position = "top")
+
+# Nutrients to explore visually
+nutrients <- c("pH", "SM", "EC", "Ca", "Mg", "Mn", "Zn", "N", "P", "K")
+
+# Plot nutrient distributions by amendment and location
+for (nutrient in nutrients) {
+  p <- ggplot(data, aes_string(x = "ammendment", y = nutrient, fill = "location")) +
+    geom_boxplot(outlier.shape = NA, alpha = 0.8) +
+    geom_jitter(position = position_jitterdodge(jitter.width = 0.2), alpha = 0.3, shape = 21) +
+    facet_wrap(~day, scales = "free_y") +
+    labs(title = paste("Distribution of", nutrient, "by Amendment and Location"),
+         x = "Amendment", y = nutrient) +
+    scale_fill_brewer(palette = "Set1") +
+    theme_pub
+  print(p)
+}
+
+# Define analysis wrapper function
+analyze_nutrient <- function(response) {
+  message("\n\n===== Analyzing: ", response, " =====")}
+```
+As described earlier, a LME model with an autoregressive order 1 (AR1) to account for irregular intervals between sampling points.
+```{r}
+# Overall model
+  formula_all <- as.formula(paste(response, "~ day * ammendment * location"))
+  model_all <- lme(formula_all, data = data, random = ~1 | rep_am, correlation = corAR1(form = ~1 | rep_am))
+  print(anova(model_all))
+# LSMeans
+  em_all <- emmeans(model_all, ~ ammendment * location | day)
+  cld_all <- cld(em_all, reversed = TRUE, adjust = "Bonferroni", Letters = letters)
+  print(cld_all)
+
+  # Pairwise comparisons
+  print(summary(contrast(em_all, method = "pairwise", adjust = "tukey")))
+```
+```{r}
+# FL model
+  formula_fl <- as.formula(paste(response, "~ ammendment + day + ammendment * day"))
+  model_fl <- lme(formula_fl, data = data_fl, random = ~1 | rep_am, correlation = corAR1(form = ~1 | rep_am))
+  message("\n-- FL Model --")
+  print(anova(model_fl))
+  print(summary(emmeans(model_fl, ~ ammendment)))
+  print(summary(contrast(emmeans(model_fl, ~ ammendment), method = "pairwise", adjust = "tukey")))
+  print(summary(contrast(emmeans(model_fl, ~ ammendment * day), method = "pairwise", adjust = "tukey")))
+
+  # GA model
+  formula_ga <- as.formula(paste(response, "~ ammendment + day + ammendment * day"))
+  model_ga <- lme(formula_ga, data = data_ga, random = ~1 | rep_am, correlation = corAR1(form = ~1 | rep_am))
+  message("\n-- GA Model --")
+  print(anova(model_ga))
+  print(summary(emmeans(model_ga, ~ ammendment)))
+  print(summary(contrast(emmeans(model_ga, ~ ammendment), method = "pairwise", adjust = "tukey")))
+  print(summary(contrast(emmeans(model_ga, ~ day * ammendment), method = "pairwise", adjust = "tukey")))
+}
+
+# Run analysis
+for (nutrient in nutrients) {
+  analyze_nutrient(nutrient)
+}
+```
+
 
 # Team work in GitHub  
 Whether you are working with your future-self or as duos, make sure to stage, commit, and push after finishing each of the sub-sections above. When committing, write commit messages that are short and descriptive (e.g., finished wrangling).  
